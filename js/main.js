@@ -17,77 +17,58 @@ const winningCombinations = [
 
 let board = [];
 let turn;
-let winner;
 let message;
-let xes = [];
-let oes = [];
-
-// Store the 9 elements that represent the squares on the page.
-
-const squares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 
 // initialize the game
 
 initialize();
 
+board = document.querySelectorAll(".box");
+message = document.getElementById("display_turn");
+message.textContent = "Click the box's to play";
+const resetBtn = document.getElementById("reset");
+resetBtn.addEventListener("click", initialize);
+
 function initialize() {
-  // console.log(turn);
-  board = document.querySelectorAll(".box");
-  // console.log(board);
-
-  message = document.getElementById("display_turn");
-  message.textContent = "Click the box's to play";
-
-  const resetBtn = document.getElementById("reset");
-  // console.log(resetBtn);
-
-  resetBtn.addEventListener("click", reset);
-}
-
-// handle players movement
-
-handleMove();
-
-function handleMove() {
-  board.forEach(function (box) {
-    // console.log(box);
-    box.addEventListener("click", function (move) {
-      if (box.textContent === "X" || box.textContent === "O") return;
-      if (turn === "X") {
-        turn = "O";
-        box.textContent = turn;
-        message.textContent = `Its X's turn`;
-        oes.push(parseInt(move.target.id));
-      } else {
-        turn = "X";
-        box.textContent = turn;
-        message.textContent = `Its O's turn`;
-        xes.push(parseInt(move.target.id));
-      }
-      winnerCheck(xes);
-      winnerCheck(oes);
-    });
-  });
-}
-
-// check winning combination
-
-winnerCheck();
-
-function winnerCheck(idx) {
-  // console.log(winningCombinations);
-  winningCombinations.forEach(function (comb) {
-    // console.log(xes);
-    // console.log(oes);
-  });
-}
-
-// reset the board
-
-function reset() {
   board.forEach(function (box) {
     box.textContent = "";
     message.textContent = "Click the box's to play";
     turn = "";
+    document.getElementById("box").classList.remove("board-disable");
+  });
+}
+
+board.forEach(function (box) {
+  box.addEventListener("click", handleMove);
+
+  // handle players movement
+
+  function handleMove() {
+    if (box.textContent === "X" || box.textContent === "O") return;
+    if (turn === "X") {
+      turn = "O";
+      box.textContent = turn;
+      message.textContent = `Its X's turn`;
+    } else {
+      turn = "X";
+      box.textContent = turn;
+      message.textContent = `Its O's turn`;
+    }
+    winnerCheck();
+  }
+});
+
+// checks winner
+
+function winnerCheck() {
+  winningCombinations.forEach(function (combination) {
+    let winner = combination.every(function (move) {
+      return board[move].textContent == turn;
+    });
+
+    if (winner) {
+      message.innerHTML = `Winner: ${turn} `;
+      document.getElementById("box").classList.add("board-disable");
+    }
   });
 }
